@@ -1,7 +1,7 @@
 import { json } from "express";
 import userModel from "../models/user.model.js";
 import bycryptjs from "bcryptjs";
-export const signUp = async (req, res) => {
+export const signUp = async (req, res, next) => {
   console.log(req.body);
   try {
     const { username, email, password } = req.body;
@@ -13,7 +13,6 @@ export const signUp = async (req, res) => {
     });
     res.status(201).json("User created successfully");
   } catch (error) {
-    console.log(error);
-    res.status(500).send(error.message);
+    next(error);
   }
 };
