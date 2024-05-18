@@ -21,7 +21,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      const res = await fetch("/api/auth/sign-up", {
+      const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,9 +39,9 @@ const SignUp = () => {
       setError(null);
       navigate("/sign-in");
     } catch (error) {
-      console.log(error);
+      console.log(JSON.parse(error));
       setLoading(false);
-      setError(error);
+      setError(JSON.parse(error));
     }
   };
   return (
