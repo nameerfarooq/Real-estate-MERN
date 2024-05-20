@@ -36,7 +36,7 @@ const SignIn = () => {
       });
       const data = await res.json();
       if (data.success === false) {
-        dispatch(signInFailure(data.message));
+        dispatch(signInFailure(error.message));
         return;
       }
       dispatch(signInSuccess(data));
