@@ -1,7 +1,8 @@
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase";
-import { useDispatch, useNavigate } from "react-redux";
+import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
 const OAuth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
