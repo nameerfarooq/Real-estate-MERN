@@ -9,6 +9,12 @@ import {
 } from "firebase/storage";
 import { app } from "../firebase";
 import {
+  SignOutUserFailed,
+  SignOutUserStarted,
+  SignOutUserSuccess,
+  deleteUserFailed,
+  deleteUserStarted,
+  deleteUserSuccess,
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
@@ -19,6 +25,7 @@ const Profile = () => {
   const fileRef = useRef(null);
   const [filePercentage, setFilePercentage] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
+  const [userDeleted, setuserDeleted] = useState(false);
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(undefined);
   const [updateSuccess, setupdateSuccess] = useState(false);
@@ -83,6 +90,45 @@ const Profile = () => {
       setupdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure(error.message));
+    }
+  };
+  const handleDeleteAccount = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(deleteUserStarted());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailed(data.message));
+        return;
+      }
+      setuserDeleted(true);
+      setTimeout(() => {
+        setuserDeleted(false);
+        dispatch(deleteUserSuccess());
+      }, 1000);
+    } catch (error) {
+      dispatch(deleteUserFailed(error.message));
+    }
+  };
+  const handleSignOutUser = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(SignOutUserStarted());
+      const res = await fetch(`/api/auth/signout`);
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(SignOutUserFailed(data.message));
+        return;
+      }
+      dispatch(SignOutUserSuccess());
+    } catch (error) {
+      dispatch(SignOutUserFailed(error.message));
     }
   };
   return (
@@ -151,12 +197,25 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
-        <span className="text-red-700 cursor-pointer">Sign Out</span>
+        <span
+          onClick={handleDeleteAccount}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete Account
+        </span>
+        <span
+          onClick={handleSignOutUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Sign Out
+        </span>
       </div>
       <p className="text-red-700">{error || ""}</p>
       <p className="text-green-700">
         {updateSuccess ? "User updated successfully" : ""}
+      </p>
+      <p className="text-green-700">
+        {userDeleted ? "User Deleted successfully" : ""}
       </p>
     </div>
   );
