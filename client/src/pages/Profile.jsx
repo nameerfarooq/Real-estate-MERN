@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getDownloadURL,
   getStorage,
@@ -8,16 +8,20 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import {
+  updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
+} from "../redux/user/userSlice";
 const Profile = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [filePercentage, setFilePercentage] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(undefined);
-  console.log(filePercentage);
-  console.log(fileUploadError);
-  console.log(formData);
+  const [updateSuccess, setupdateSuccess] = useState(false);
   const handleFileUpload = async (file) => {
     const storage = getStorage(app);
     const fileName = new Date().getTime() + file.name;
@@ -45,11 +49,46 @@ const Profile = () => {
       handleFileUpload(file);
     }
   }, [file]);
+  useEffect(() => {
+    if (updateSuccess) {
+      setTimeout(() => {
+        setupdateSuccess(false);
+        setFilePercentage(0);
+      }, 1000);
+    }
+  }, [updateSuccess]);
 
+  const handleFormData = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      console.log(data);
+      dispatch(updateUserSuccess(data));
+      setupdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
+  };
   return (
     <div className="max-w-lg mx-auto p-3">
       <h1 className="text-3xl font-semibold text-center my-7 ">Profile</h1>
-      <form className="flex flex-col  gap-4">
+      <form onSubmit={handleFormSubmit} className="flex flex-col  gap-4">
         <input
           onChange={(e) => setFile(e.target.files[0])}
           type="file"
@@ -88,27 +127,37 @@ const Profile = () => {
           className="rounded-lg p-3 border outline-none"
           placeholder="username"
           id="username"
+          onChange={handleFormData}
         />
         <input
           type="email"
           className="rounded-lg p-3 border outline-none"
           placeholder="email"
           id="email"
+          onChange={handleFormData}
         />
         <input
           type="password"
           className="rounded-lg p-3 border outline-none"
           placeholder="password"
           id="password"
+          onChange={handleFormData}
         />
-        <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-90 disabled:opacity-80 disabled:cursor-not-allowed">
-          update
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-90 disabled:opacity-80 disabled:cursor-not-allowed"
+        >
+          {loading ? "Loading..." : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
         <span className="text-red-700 cursor-pointer">Delete Account</span>
         <span className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
+      <p className="text-red-700">{error || ""}</p>
+      <p className="text-green-700">
+        {updateSuccess ? "User updated successfully" : ""}
+      </p>
     </div>
   );
 };
