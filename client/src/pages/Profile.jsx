@@ -8,6 +8,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { Link } from "react-router-dom";
 import {
   SignOutUserFailed,
   SignOutUserStarted,
@@ -195,7 +196,14 @@ const Profile = () => {
         >
           {loading ? "Loading..." : "Update"}
         </button>
+        <Link
+          to={"/create-listing"}
+          className="bg-green-700 text-white p-3 rounded-lg text-center uppercase hover:opacity-95"
+        >
+          Create listing
+        </Link>
       </form>
+
       <div className="flex justify-between mt-5">
         <span
           onClick={handleDeleteAccount}
