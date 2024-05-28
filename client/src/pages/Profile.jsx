@@ -20,6 +20,7 @@ import {
   updateUserStart,
   updateUserSuccess,
 } from "../redux/user/userSlice";
+import AllListings from "../components/AllListings";
 const Profile = () => {
   const dispatch = useDispatch();
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -30,6 +31,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(undefined);
   const [updateSuccess, setupdateSuccess] = useState(false);
+  const [showListings, setShowListings] = useState(false);
   const handleFileUpload = async (file) => {
     const storage = getStorage(app);
     const fileName = new Date().getTime() + file.name;
@@ -225,6 +227,13 @@ const Profile = () => {
       <p className="text-green-700">
         {userDeleted ? "User Deleted successfully" : ""}
       </p>
+      <p
+        className="text-green-700 cursor-pointer text-center my-5"
+        onClick={() => setShowListings(!showListings)}
+      >
+        {showListings ? "Hide Listings" : "Show Listing"}
+      </p>
+      {showListings && <AllListings />}
     </div>
   );
 };
