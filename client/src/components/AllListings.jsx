@@ -11,24 +11,36 @@ const AllListings = () => {
     try {
       const res = await fetch(`/api/user/listings/${currentUser._id}`);
       const data = await res.json();
+      if (data.success === false) {
+        setError(data.message);
+      }
       setListings(data);
     } catch (error) {
-      setError(error);
+      setError(error.message);
+      console.log("error :", error);
     }
   };
   useEffect(() => {
     fetchListings();
   }, []);
-
+  const updateListings = async (id) => {
+    setListings(listings.filter((listing) => listing._id !== id));
+  };
   return (
     <div>
       <p className="text-3xl font-semibold text-center my-10">Your Listings</p>
       {error ? (
         <p>{error}</p>
-      ) : (
-        listings.map((listing, index) => (
-          <ListingItem key={index} item={listing} />
+      ) : listings.length > 0 ? (
+        listings?.map((listing, index) => (
+          <ListingItem
+            key={index}
+            item={listing}
+            updateState={() => updateListings(listing._id)}
+          />
         ))
+      ) : (
+        <p className="text-center my-5">No listings available</p>
       )}
     </div>
   );
