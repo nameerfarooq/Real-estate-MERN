@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const ListingItem = ({ item, updateState }) => {
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const deleteMe = async () => {
     const res = await fetch(`/api/listing/delete/${item._id}`, {
@@ -29,7 +30,12 @@ const ListingItem = ({ item, updateState }) => {
           <p className="text-red-700 cursor-pointer" onClick={deleteMe}>
             Delete
           </p>
-          <p className="text-green-700 cursor-pointer">Edit</p>
+          <p
+            onClick={() => navigate(`/update-listing/${item._id}`)}
+            className="text-green-700 cursor-pointer"
+          >
+            Edit
+          </p>
         </div>
       </div>
       {error && <p>{error}</p>}

@@ -5,15 +5,19 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { useSelector } from "react-redux";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { app } from "../firebase";
-import { FaEraser, FaRemoveFormat, FaTrash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-const CreateListing = () => {
+import { FaTrash } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
+const UpdateListing = () => {
+  const { id } = useParams();
   const { currentUser } = useSelector((state) => state.user);
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [imageUploadError, setImageUploadError] = useState(false);
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setformData] = useState({
     imageUrls: [],
     name: "",
@@ -111,9 +115,7 @@ const CreateListing = () => {
     }
     console.log(formData);
   };
-  const navigate = useNavigate();
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -123,8 +125,8 @@ const CreateListing = () => {
         return setError("Upload atleast one image");
       if (+formData.regularPrice < +formData.discountPrice)
         return setError("Discount price must be less than regular price");
-      const res = await fetch("/api/listing/create", {
-        method: "POST",
+      const res = await fetch(`/api/listing/update/${id}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -142,10 +144,26 @@ const CreateListing = () => {
       setLoading(false);
     }
   };
+  const fetchThisListing = async () => {
+    try {
+      const req = await fetch(`/api/listing/getListing/${id}`);
+      const data = await req.json();
+      if (data.success === false) {
+        return console.log(data.message);
+      }
+      console.log("listingggggggg", data);
+      setformData(data);
+    } catch (error) {
+      setError(error);
+    }
+  };
+  useEffect(() => {
+    fetchThisListing();
+  }, []);
   return (
     <main className="max-w-4xl mx-auto p-3">
       <h1 className="text-3xl font-semibold text-center my-7">
-        Create a listing
+        Update listing
       </h1>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
         <div className="flex flex-col gap-4 flex-1">
@@ -349,7 +367,7 @@ const CreateListing = () => {
             disabled={loading || uploading}
             className="bg-slate-700 text-white p-3 uppercase rounded disabled:opacity-80 hover:opacity-95"
           >
-            {loading ? "Creating..." : "Create Listing"}
+            {loading ? "Updating..." : "Update Listing"}
           </button>
           {error && <p className="text-red-700">{error}</p>}
         </div>
@@ -358,4 +376,4 @@ const CreateListing = () => {
   );
 };
 
-export default CreateListing;
+export default UpdateListing;
