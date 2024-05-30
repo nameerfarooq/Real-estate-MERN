@@ -4,7 +4,15 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
-import { FaMapMarked, FaMapMarker, FaMarker } from "react-icons/fa";
+import {
+  FaBath,
+  FaBed,
+  FaChair,
+  FaMapMarked,
+  FaMapMarker,
+  FaMarker,
+  FaParking,
+} from "react-icons/fa";
 const Listing = () => {
   SwiperCore.use([Navigation]);
   const [error, setError] = useState(false);
@@ -77,6 +85,32 @@ const Listing = () => {
               <span className="font-semibold text-black">Description - </span>
               {listing.description}
             </p>
+            <ul className="text-green-900 font-semibold text-sm flex gap-4 sm:gap-6 items-center flex-wrap">
+              <li className="flex items-center gap-2 whitespace-nowrap">
+                <FaBed className="text-lg" />
+                <span>
+                  {listing.bedrooms > 1
+                    ? `${listing.bedrooms} Beds`
+                    : `${listing.bedrooms} Bed`}
+                </span>
+              </li>
+              <li className="flex items-center gap-2 whitespace-nowrap">
+                <FaBath className="text-lg" />
+                <span>
+                  {listing.bathrooms > 1
+                    ? `${listing.bathrooms} Baths`
+                    : `${listing.bathrooms} Bath`}
+                </span>
+              </li>
+              <li className="flex items-center gap-2 whitespace-nowrap">
+                <FaParking className="text-lg" />
+                <span>{listing.parking ? "parking Spot" : "no parking"}</span>
+              </li>
+              <li className="flex items-center gap-2 whitespace-nowrap">
+                <FaChair className="text-lg" />
+                <span>{listing.furnished ? "furnished" : "unfurnished"}</span>
+              </li>
+            </ul>
           </div>
         </>
       )}
