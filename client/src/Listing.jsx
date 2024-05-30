@@ -62,7 +62,7 @@ const Listing = () => {
               </SwiperSlide>
             ))}
           </Swiper>
-          <div className="p-3 max-w-7xl mx-auto ">
+          <div className="p-3 max-w-7xl mx-auto my-10">
             <div className="text-3xl font-semibold my-7">
               <span>{listing.name}</span> - $<span>{listing.regularPrice}</span>{" "}
               {listing.type === "rent" && <span>/ month</span>}
