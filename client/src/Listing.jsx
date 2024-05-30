@@ -2,23 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
+import { useSelector } from "react-redux";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
-import {
-  FaBath,
-  FaBed,
-  FaChair,
-  FaMapMarked,
-  FaMapMarker,
-  FaMarker,
-  FaParking,
-} from "react-icons/fa";
+import { FaBath, FaBed, FaChair, FaMapMarked, FaParking } from "react-icons/fa";
+import Contact from "./components/Contact";
 const Listing = () => {
   SwiperCore.use([Navigation]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listing, setListing] = useState({});
+  const [contact, setContact] = useState(false);
   const { id } = useParams();
+  const { currentUser } = useSelector((state) => state.user);
   const fetchThisListing = async () => {
     try {
       setError(false);
@@ -111,6 +107,20 @@ const Listing = () => {
                 <span>{listing.furnished ? "furnished" : "unfurnished"}</span>
               </li>
             </ul>
+            {!contact && currentUser && currentUser._id !== listing.userRef && (
+              <button
+                onClick={() => setContact(true)}
+                className="bg-slate-700 text-white uppercase text-center p-3 rounded-lg hover:opacity-95 w-full my-10"
+              >
+                Contact Owner
+              </button>
+            )}
+            {contact && (
+              <div className="my-10">
+                {" "}
+                <Contact listing={listing}/>
+              </div>
+            )}
           </div>
         </>
       )}
