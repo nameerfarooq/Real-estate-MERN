@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ListingCard from "../components/ListingCard";
 
 const Search = () => {
   const navigate = useNavigate();
@@ -85,16 +86,14 @@ const Search = () => {
       const searchQuery = urlParams.toString();
       const res = await fetch(`/api/listing/get?${searchQuery}`);
       const data = await res.json();
-      console.log("Search data : ", data);
       setListings(data);
       setLoading(false);
     };
     fetchListings();
-    console.log(listings);
   }, [location.search]);
   return (
     <div className="flex flex-col md:flex-row">
-      <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
+      <div className="p-7 border-b-2 md:border-r-2 md:min-h-[calc(100vh-72px)]">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           <div className="flex items-center gap-2">
             <label className="whitespace-nowrap font-semibold">
@@ -196,10 +195,23 @@ const Search = () => {
           </button>
         </form>
       </div>
-      <div className="p-3 ">
+      <div className="p-3 flex-1">
         <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-3">
           Listing results:
         </h1>
+        <div className="flex gap-5 p-7 flex-wrap">
+          {!loading ? (
+            listings.length > 0 ? (
+              listings.map((listing) => (
+                <ListingCard key={listing._id} listing={listing} />
+              ))
+            ) : (
+              "no listings found"
+            )
+          ) : (
+            <p className=" text-slate-700 font-semibold text-xl">Loading...</p>
+          )}
+        </div>
       </div>
     </div>
   );

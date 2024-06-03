@@ -73,7 +73,7 @@ const Listing = () => {
               </div>
               {listing.offer && (
                 <div className="p-1 rounded-lg  w-32 text-center  bg-green-900 text-white">
-                  ${listing.discountPrice}
+                  ${listing.discountPrice} off
                 </div>
               )}
             </div>
@@ -118,7 +118,7 @@ const Listing = () => {
             {contact && (
               <div className="my-10">
                 {" "}
-                <Contact listing={listing}/>
+                <Contact listing={listing} />
               </div>
             )}
           </div>
