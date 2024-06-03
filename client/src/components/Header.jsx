@@ -45,7 +45,7 @@ const Header = () => {
           </button>
         </form>
         <ul className="flex gap-4">
-          <Link to={"/home"}>
+          <Link to={"/"}>
             <li className="text-slate-700 hidden sm:inline hover:underline">
               Home
             </li>
