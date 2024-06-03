@@ -16,7 +16,7 @@ const ListingCard = ({ listing }) => {
   return (
     <div
       onClick={() => navigate(`/listing/${listing._id}`)}
-      className="w-72 rounded-lg flex flex-col gap-3 bg-white cursor-pointer overflow-hidden"
+      className="w-96 rounded-lg flex flex-col gap-3 bg-white cursor-pointer overflow-hidden"
     >
       <img
         src={
