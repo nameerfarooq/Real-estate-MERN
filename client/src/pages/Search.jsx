@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const Search = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [listings, setListings] = useState([]);
   const [sidebarData, setSidebarData] = useState({
     searchTerm: "",
     type: "all",
@@ -78,6 +80,17 @@ const Search = () => {
         order: orderFromUrl || "desc",
       });
     }
+    const fetchListings = async () => {
+      setLoading(true);
+      const searchQuery = urlParams.toString();
+      const res = await fetch(`/api/listing/get?${searchQuery}`);
+      const data = await res.json();
+      console.log("Search data : ", data);
+      setListings(data);
+      setLoading(false);
+    };
+    fetchListings();
+    console.log(listings);
   }, [location.search]);
   return (
     <div className="flex flex-col md:flex-row">
