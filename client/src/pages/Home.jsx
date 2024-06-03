@@ -53,7 +53,7 @@ const Home = () => {
           place with ease{" "}
         </h1>
         <div className="text-slate-500 text-xs sm:text-lg">
-          Nameer Estate is the best place to find your next perfect place to
+          City Estate is the best place to find your next perfect place to
           live. we have a wide range of properties for you to choose from
         </div>
         <Link to={"/search"}>
